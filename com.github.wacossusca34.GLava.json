@@ -1,0 +1,102 @@
+{
+    "app-id": "com.github.wacossusca34.GLava",
+    "branch": "stable",
+    "runtime": "org.freedesktop.Platform",
+    "runtime-version": "18.08",
+    "sdk": "org.freedesktop.Sdk",
+    "command": "glava",
+    "add-extensions": {
+        "org.freedesktop.Platform.GL": {
+            "directory": "lib/x86_64-linux-gnu/GL",
+            "version": "1.4",
+            "versions": "18.08;1.4",
+            "subdirectories": true,
+            "no-autodownload": true,
+            "autodelete": false,
+            "add-ld-path": "lib",
+            "merge-dirs": "vulkan/icd.d;glvnd/egl_vendor.d",
+            "download-if": "active-gl-driver",
+            "enable-if": "active-gl-driver"
+        }
+    },
+    "finish-args": [
+        "--share=ipc",
+        "--socket=x11",
+        "--socket=pulseaudio",
+        "--device=dri"
+    ],
+    "modules": [
+        {
+            "name": "glfw",
+            "buildsystem": "cmake",
+            "config-opts": [
+                "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
+                "-DBUILD_SHARED_LIBS:BOOL=ON",
+                "-DBUILD_GLFW_EXAMPLES:BOOL=OFF",
+                "-DBUILD_GLFW_DOCS:BOOL=OFF"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/glfw/glfw/archive/3.2.1.tar.gz",
+                    "sha256": "e10f0de1384d75e6fc210c53e91843f6110d6c4f3afbfb588130713c2f9d8fe8"
+                }
+            ],
+            "cleanup": [
+                "/include",
+                "/lib/pkgconfig"
+            ]
+        },
+        {
+            "name": "glava",
+            "buildsystem": "simple",
+            "build-commands": [
+                "patch -p0 < paths.patch",
+                "make glad",
+                "make",
+                "install -D -m0755 glava /app/bin/glava",
+                "mkdir -p /app/etc/xdg/glava",
+                "cp -rv shaders/* /app/etc/xdg/glava/",
+                "mkdir -p /app/lib/x86_64-linux-gnu/GL"
+            ],
+            "build-options":
+            {
+                "env":
+                {
+                    "ENABLE_GLFW": "1",
+                    "BUILD": "NOT_DEBUG"
+                },
+                "ldflags": "-L/app/lib"
+            },
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/Dav1dde/glad/archive/v0.1.28.tar.gz",
+                    "sha256": "5f49846a69e10e88aab503b08f3926a05706809f73b53e1cffeab8d7667ecdc0",
+                    "dest": "glad"
+                },
+                {
+                    "type": "file",
+                    "url": "https://raw.githubusercontent.com/KhronosGroup/OpenGL-Registry/master/xml/gl.xml",
+                    "sha256": "d0b3dae5a56d1ac0a56220948758a5b2d1d722cd4a15ee7bdb847960308017c5",
+                    "dest": "glad"
+                },
+                {
+                    "type": "file",
+                    "url": "https://raw.githubusercontent.com/KhronosGroup/EGL-Registry/master/api/KHR/khrplatform.h",
+                    "sha256": "890c04e4cc75739666aa8ff989a0a37b7f11d9e0ec60bc362b40f91835d11b5c",
+                    "dest": "glad"
+                },
+                {
+                    "type": "archive",
+                    "url": "https://github.com/wacossusca34/glava/archive/v1.5.8.tar.gz",
+                    "sha256": "3dab12f87512f97c43a309da7aee5014c48a1cc7188949712c0665777f9a98d7"
+                },
+                {
+                    "type": "file",
+                    "path": "paths.patch"
+                }
+            ]
+        }
+    ]
+}

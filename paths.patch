@@ -1,0 +1,35 @@
+--- glx_wcb.c.orig	2018-09-12 00:28:02.086453095 +0200
++++ glx_wcb.c	2018-09-12 00:29:54.211570683 +0200
+@@ -191,8 +191,8 @@
+     maximized   = false;
+     transparent = false;
+ 
+-    void* hgl  = dlopen("libGL.so", RTLD_LAZY);
+-    void* hglx = dlopen("libGLX.so", RTLD_LAZY);
++    void* hgl  = dlopen("libGL.so.1", RTLD_LAZY);
++    void* hglx = dlopen("libGLX.so.0", RTLD_LAZY);
+ 
+     if (!hgl && !hglx) {
+         fprintf(stderr, "Failed to load GLX functions (libGL and libGLX do not exist!)\n");
+--- glava.c.orig	2018-12-25 16:03:09.846589346 +0100
++++ glava.c	2018-12-25 16:09:24.512472698 +0100
+@@ -56,7 +56,7 @@
+ /* FHS compliant systems */
+ #elif defined(__unix__) || defined(GLAVA_UNIX)
+ #ifndef SHADER_INSTALL_PATH
+-#define SHADER_INSTALL_PATH "/etc/xdg/glava"
++#define SHADER_INSTALL_PATH "/app/etc/xdg/glava"
+ #endif
+ #define SHADER_USER_PATH FORMAT("%s/glava", ENV("XDG_CONFIG_HOME", "%s/.config", ENV("HOME", "/home")))
+ /* OSX */
+--- glfw_wcb.c.orig	2018-11-03 00:27:54.000000000 +0100
++++ glfw_wcb.c	2018-12-25 17:27:09.643635490 +0100
+@@ -13,7 +13,7 @@
+ 
+ #include <X11/Xlib.h>
+ 
+-#include <glad/glad.h>
++#include "glad.h"
+ #include <GLFW/glfw3.h>
+ 
+ #include "render.h"
